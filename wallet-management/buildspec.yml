@@ -1,0 +1,27 @@
+version: 0.1
+phases:
+  install:
+    commands:
+
+      - git config --global credential.helper 'store'
+      - echo "https://$TOKEN:x-oauth-basic@github.com/" > ~/.git-credentials
+      - sed -i "s|#develop|#$GIT_BRANCH|g" package.json
+      - npm install --verbose
+      - npm install -g serverless --verbose
+
+  pre_build:
+    commands:
+      - echo checking code quality...
+      # - npx eslint -c .eslintrc.json --ext .js src/
+  build:
+    commands:
+      # Will be using this in future for unit testing
+      # - mocha test-application-code.js
+  post_build:
+    commands:
+    #  - cd src
+      - serverless deploy --stage $STAGE
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'src'

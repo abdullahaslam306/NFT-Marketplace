@@ -1,0 +1,103 @@
+local:
+  STAGE: 'local'
+  LOG_LEVEL: 'trace'
+  REGION: 'us-east-1'
+  DB_DIALECT: 'postgres'
+  CUSTOM_AUTHORIZER_ARN: ''
+  MFA_EMAIL_SUBJECT: 'BLOCommerce Verification Code'
+  MERCHANT_APP_DOMAIN: 'metaverse-dev.blocommerce.com'
+  ENCRYPTION_KEYS_SECRET_ID: 'BlocommerceDevelopmentPasswordEncryptionKeys'
+  S3_TEMPORARY_ROLE_ARN: ${env:temporary_role_arn}
+  TEMP_CREDS_SESSION_DURATION: ${env:TEMP_CREDS_SESSION_DURATION}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-development
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/user_meta_data_bucket_name}
+  S3_NFT_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/nft_meta_data_bucket_name}
+  MERCHANT_COGNITO_USERPOOL_ID: ${ssm:/BLOCOMMERCE/Development/cognito/merchant_user_pool_id}
+  MERCHANT_COGNITO_USERPOOL_NAME: ${ssm:/BLOCOMMERCE/Development/cognito/merchant_user_pool_name}
+  MERCHANT_COGNITO_USERPOOL_APP_ID : ${ssm:/BLOCOMMERCE/Development/cognito/merchant_user_pool_app_id}
+  BLOCOMMERCE_WALLET_MANAGEMENT_BACKEND_BASE_URL: 'https://wallet-management-development.blocommerce.com/Development'
+  # Add all variables after env: to your system environment
+  BLOCOMMERCE_DB_NAME: ${env:BLOCOMMERCE_DB_NAME}
+  BLOCOMMERCE_DB_PORT: ${env:BLOCOMMERCE_DB_PORT}
+  BLOCOMMERCE_DB_HOSTNAME: ${env:BLOCOMMERCE_DB_HOSTNAME}
+  BLOCOMMERCE_DB_PASSWORD: ${env:BLOCOMMERCE_DB_PASSWORD}
+  BLOCOMMERCE_DB_USERNAME: ${env:BLOCOMMERCE_DB_USERNAME}
+  LOGGEDIN_USER_ID: ${env:LOGGEDIN_USER_ID}
+  LOGGEDIN_USER_UID: ${env:LOGGEDIN_USER_UID}
+  LOGGEDIN_MERCHANT_ID: ${env:LOGGEDIN_USER_MERCHANT_ID}
+  LOGGEDIN_MERCHANT_COGNITO_SID: ${env:LOGGEDIN_MERCHANT_COGNITO_SID}
+  
+Development:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'Development'
+  BLOCOMMERCE_DB_DIALECT: 'postgres'
+  ENCRYPTION_KEYS_SECRET_ID: 'BlocommerceDevelopmentPasswordEncryptionKeys'
+  MFA_EMAIL_SUBJECT: 'BLOCommerce Verification Code'
+  MERCHANT_APP_DOMAIN: 'metaverse-dev.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Development/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Development/aurora/db_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Development/aurora/writer/endpoint}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Development/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Development/aurora/user_name}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/user_meta_data_bucket_name}
+  S3_NFT_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/nft_meta_data_bucket_name}
+  MERCHANT_COGNITO_USERPOOL_ID: ${ssm:/BLOCOMMERCE/Development/cognito/merchant_user_pool_id}
+  MERCHANT_COGNITO_USERPOOL_NAME: ${ssm:/BLOCOMMERCE/Development/cognito/merchant_user_pool_name}
+  MERCHANT_COGNITO_USERPOOL_APP_ID: ${ssm:/BLOCOMMERCE/Development/cognito/merchant_user_pool_app_id}
+  S3_TEMPORARY_ROLE_ARN: ${ssm:/BLOCOMMERCE/Development/s3/blocommerce-user-meta-data/iam_role}
+  TEMP_CREDS_SESSION_DURATION: ${ssm:/BLOCOMMERCE/Development/merchant-auth-backend/s3/temp_creds_session_duration}
+  BLOCOMMERCE_WALLET_MANAGEMENT_BACKEND_BASE_URL: 'https://wallet-management-development.blocommerce.com/Development'
+  MERCHANT_APP_CODEPIPELINE: 'AWSCodePipeline-Blocommerce-Development-merchant-app-cdk'
+  ENCRYPTION_ROTATION_RATE: ${ssm:/BLOCOMMERCE/Development/lambda/rotation_rate}
+
+Staging:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'  
+  STAGE: 'Staging'
+  BLOCOMMERCE_DB_DIALECT: 'postgres'
+  MFA_EMAIL_SUBJECT: 'BLOCommerce Verification Code'
+  MERCHANT_APP_DOMAIN: 'metaverse-stg.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Staging/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Staging/aurora/db_name}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Staging/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/user_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/writer/endpoint}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-staging
+  S3_NFT_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Staging/s3/nft_meta_data_bucket_name}
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Staging/s3/user_meta_data_bucket_name}
+  MERCHANT_COGNITO_USERPOOL_ID: ${ssm:/BLOCOMMERCE/Staging/cognito/merchant_user_pool_id}
+  MERCHANT_COGNITO_USERPOOL_NAME: ${ssm:/BLOCOMMERCE/Staging/cognito/merchant_user_pool_name}
+  MERCHANT_COGNITO_USERPOOL_APP_ID: ${ssm:/BLOCOMMERCE/Staging/cognito/merchant_user_pool_app_id}
+  S3_TEMPORARY_ROLE_ARN: ${ssm:/BLOCOMMERCE/Staging/s3/blocommerce-user-meta-data/iam_role}
+  ENCRYPTION_KEYS_SECRET_ID: 'BlocommerceStagingPasswordEncryptionKeys'
+  ENCRYPTION_ROTATION_RATE: ${ssm:/BLOCOMMERCE/Staging/lambda/rotation_rate}
+  MERCHANT_APP_CODEPIPELINE: 'AWSCodePipeline-Blocommerce-Staging-merchant-app-cdk'
+  TEMP_CREDS_SESSION_DURATION: ${ssm:/BLOCOMMERCE/Staging/merchant-auth-backend/s3/temp_creds_session_duration}
+  BLOCOMMERCE_WALLET_MANAGEMENT_BACKEND_BASE_URL: 'https://wallet-management-staging.blocommerce.com/Staging'
+
+Production:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'  
+  STAGE: 'Production'
+  BLOCOMMERCE_DB_DIALECT: 'postgres'
+  MERCHANT_APP_DOMAIN: 'metaverse.blocommerce.com'
+  MFA_EMAIL_SUBJECT: 'BLOCommerce Verification Code'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Production/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Production/aurora/db_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Production/aurora/writer/endpoint}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Production/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Production/aurora/user_name}
+  ENCRYPTION_KEYS_SECRET_ID: 'BlocommerceProductionPasswordEncryptionKeys'
+  ENCRYPTION_ROTATION_RATE: ${ssm:/BLOCOMMERCE/Production/lambda/rotation_rate}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-production
+  S3_NFT_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Production/s3/nft_meta_data_bucket_name}
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Production/s3/user_meta_data_bucket_name}
+  MERCHANT_COGNITO_USERPOOL_ID: ${ssm:/BLOCOMMERCE/Production/cognito/merchant_user_pool_id}
+  MERCHANT_COGNITO_USERPOOL_NAME: ${ssm:/BLOCOMMERCE/Production/cognito/merchant_user_pool_name}
+  MERCHANT_COGNITO_USERPOOL_APP_ID: ${ssm:/BLOCOMMERCE/Production/cognito/merchant_user_pool_app_id}
+  S3_TEMPORARY_ROLE_ARN: ${ssm:/BLOCOMMERCE/Production/s3/blocommerce-user-meta-data/iam_role}
+  MERCHANT_APP_CODEPIPELINE: 'AWSCodePipeline-Blocommerce-Production-merchant-app-cdk'
+  TEMP_CREDS_SESSION_DURATION: ${ssm:/BLOCOMMERCE/Production/merchant-auth-backend/s3/temp_creds_session_duration}
+  BLOCOMMERCE_WALLET_MANAGEMENT_BACKEND_BASE_URL: 'https://wallet-management.blocommerce.com/Production'

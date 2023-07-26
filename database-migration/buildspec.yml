@@ -1,0 +1,26 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - git config --global credential.helper 'store'
+      - echo "https://$TOKEN:x-oauth-basic@github.com/" > ~/.git-credentials
+      - sed -i "s|#develop|#$GIT_BRANCH|g" package.json
+      - npm install --verbose
+      - npm install -g eslint
+      - npm install -g eslint-plugin-import
+      - npm install -g eslint-config-airbnb-base
+  pre_build:
+    commands:
+      - echo checking code quality...
+      - eslint -c .eslintrc.json --ext .js ./migrations/
+      - eslint -c .eslintrc.json --ext .js ./seeders/
+  build:
+    commands:
+      - npx sequelize db:migrate --env $STAGE --debug
+      - npx sequelize db:seed:all --env $STAGE --debug
+  post_build:
+    commands:
+      - echo PostBuild
+artifacts:
+  files:
+    - '**/*'

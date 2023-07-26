@@ -1,0 +1,49 @@
+{
+  "name": "wallet-management",
+  "version": "1.0.0",
+  "description": "Blocommerce Ethereum Wallet",
+  "main": "index.js",
+  "scripts": {
+    "start": "serverless offline start --stage local",
+    "test": "jest",
+    "lint": "npx eslint -c .eslintrc.json --ext .js src/ --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@workid_github:blocommerce/wallet-management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-kms-provider": "^0.3.4",
+    "axios": "^0.22.0",
+    "backend-utility": "git+https://github.com/blocommerce/backend-utility.git#develop",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.1.1",
+    "data-access-utility": "git+https://github.com/blocommerce/data-access-utility.git#develop",
+    "dynamo-access-utility": "git+https://github.com/blocommerce/dynamo-access-utility.git#develop",
+    "ethereumjs-tx": "^2.1.2",
+    "ethers": "^5.5.1",
+    "jsonapi-serializer": "^3.6.7",
+    "lodash": "^4.17.21",
+    "moralis": "^1.2.1",
+    "pino": "^7.0.5",
+    "randomstring": "^1.2.1",
+    "sequelize-mock": "^0.10.2",
+    "serverless-plugin-lambda-insights": "^1.4.0",
+    "serverless-plugin-tracing": "^2.0.0",
+    "uuidv4": "^6.2.12",
+    "vandium": "^6.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "jest": "^27.2.4",
+    "jest-junit": "^13.0.0",
+    "serverless-offline": "^8.2.0"
+  }
+}

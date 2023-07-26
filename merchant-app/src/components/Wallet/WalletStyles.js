@@ -1,0 +1,66 @@
+import { createStyles, makeStyles } from "@mui/styles";
+
+export const useWalletStyles = makeStyles((theme) =>
+  createStyles({
+    parent: {
+      display: "flex",
+    },
+    // container: {
+    //   padding: 0,
+    // },
+    container: {
+      padding: 0,
+      [(theme) => theme.breakpoints.down("sm")]: {
+        width: "100%",
+      },
+    },
+    column: {
+      padding: "0 10px",
+    },
+    card: {
+      margin: "0 auto",
+      textAlign: "center",
+      backgroundColor: "#383F4E",
+      transition: "0.3s",
+      "&:hover": {
+        boxShadow: "10px 10px 37px 8px rgba(0,0,0,0.75)",
+      },
+    },
+    cardParent: {
+      width: "25%",
+      cursor: "pointer",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+    },
+    addIcon: {
+      transform: "scale(5.0)",
+    },
+    iconWrapper: {
+      padding: "30%",
+      paddingBottom: "14%",
+    },
+    uploadFile: {
+      paddingBottom: "10%",
+      fontSize: "1.5rem",
+      fontWeight: "bold",
+    },
+    modal: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "0.3s",
+    },
+    searchField: {
+      width: "19rem",
+      marginRight: "4rem",
+    },
+    sortDropDown: {
+      minWidth: "9rem",
+      "& div label": {
+        paddingLeft: "0.5rem",
+      },
+    },
+  })
+);

@@ -1,0 +1,57 @@
+local:
+  LOG_LEVEL: 'trace'
+  REGION: 'us-east-1'
+  STAGE: 'local'
+  THUMBNAIL_WIDTH: 200
+  CUSTOM_AUTHORIZER_ARN: ''
+  LOGGEDIN_USER_ID: ${env:LOGGEDIN_USER_ID}
+  LOGGEDIN_MERCHANT_ID: ${env:LOGGEDIN_USER_MERCHANT_ID}
+  LOGGEDIN_MERCHANT_COGNITO_SID: ${env:LOGGEDIN_MERCHANT_COGNITO_SID}
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/user_meta_data_bucket_name}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  
+Development:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'Development'
+  THUMBNAIL_WIDTH: 200
+  MERCHANT_APP_DOMAIN: 'merchant-dev.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Development/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Development/aurora/db_name}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Development/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Development/aurora/user_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Development/aurora/writer/endpoint}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/user_meta_data_bucket_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Development/lambda/merchant_custom_authorizer_arn} 
+  # 'arn:aws:lambda:us-east-1:217392961699:function:merchant-auth-backend-Development-Authorizer'
+  
+Staging:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'Staging'
+  THUMBNAIL_WIDTH: 200
+  MERCHANT_APP_DOMAIN: 'merchant-stg.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Staging/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Staging/aurora/db_name}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Staging/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/user_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/writer/endpoint}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-staging
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Staging/s3/user_meta_data_bucket_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Staging/lambda/merchant_custom_authorizer_arn} 
+  
+Production:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'Production'
+  THUMBNAIL_WIDTH: 200
+  MERCHANT_APP_DOMAIN: 'merchant.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Production/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Production/aurora/db_name}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Production/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Production/aurora/user_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Production/aurora/writer/endpoint}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-production
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Production/s3/user_meta_data_bucket_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Production/lambda/merchant_custom_authorizer_arn} 

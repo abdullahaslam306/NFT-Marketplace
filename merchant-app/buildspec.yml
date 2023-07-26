@@ -1,0 +1,34 @@
+version: 0.1
+env:
+  parameter-store:
+    MERCHANT_COGNITO_USERPOOL_ID: "/BLOCOMMERCE/$STAGE/cognito/merchant_user_pool_id"
+    MERCHANT_COGNITO_USERPOOL_APP_ID: "/BLOCOMMERCE/$STAGE/cognito/merchant_user_pool_app_id"
+phases:
+  pre_build:
+    commands:
+      - echo Updating Environment Variable...
+      - sed -i "s|#STAGE|$STAGE|g" .env
+      - sed -i "s|#APISTAGE|$API_STAGE|g" .env
+      - echo "APP_ORIGIN = $APP_ORIGIN" >> .env
+      - echo "NEXT_PUBLIC_REACT_APP_ENCRYPTION_KEY = $(aws secretsmanager get-secret-value --secret-id $ENCRYPTION_SECRET_NAME | jq -r ".SecretString" | jq -r $PUBLIC_KEY_SECRET | base64 | tr -d '\r\n')" >> .env
+      - echo "NEXT_PUBLIC_REACT_APP_ENCRYPTION_KEY_VERSION = "$(aws secretsmanager list-secret-version-ids --secret-id $ENCRYPTION_SECRET_NAME | jq '.Versions' | jq -c '.[] | select(.VersionStages | contains(["AWSCURRENT"]))' | jq -r '.VersionId') >> .env
+      - echo "NEXT_PUBLIC_USER_POOL_ID = "$MERCHANT_COGNITO_USERPOOL_ID >> .env
+      - echo "NEXT_PUBLIC_USER_POOL_WEBCLIENT_ID = "$MERCHANT_COGNITO_USERPOOL_APP_ID >> .env
+      - echo "NEXT_PUBLIC_ENV_KEY = "$ENV >> .env
+      - echo "NEXT_PUBLIC_PUB_NUB_SUBSCRIBE_KEY = "$NEXT_PUBLIC_PUB_NUB_SUBSCRIBE_KEY >> .env
+      - cat .env
+      - npm install --force
+      - npm install next -g
+      - npm install serverless@2.72.2 -g
+      - aws s3 cp s3://${DEPLOYMENT_BUCKET}/serverless/ ./.serverless --recursive
+  build:
+    commands:
+      # - echo Build started..
+      - aws s3 rm s3://$DEPLOYMENT_BUCKET --recursive
+      - export NODE_OPTIONS=--max-old-space-size=4096
+      - set NODE_OPTIONS=--max-old-space-size=4096
+      - serverless
+  post_build:
+    commands:
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths /*
+      - aws s3 sync ./.serverless s3://$DEPLOYMENT_BUCKET/serverless

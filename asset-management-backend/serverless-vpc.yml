@@ -1,0 +1,21 @@
+local: undefined
+
+Development: 
+  securityGroupIds:
+    - sg-076cf6f1235228f5d
+  subnetIds: 
+    - subnet-091f28f5619b77501
+
+Staging:
+  securityGroupIds:
+    - sg-0408e2a246e7bb195
+  subnetIds:
+    - subnet-0ad51670665358fa0
+    - subnet-01c040dfbedca14f0
+
+Production:
+  securityGroupIds:
+    - sg-0a7ea2ee527d748f2
+  subnetIds:
+    - subnet-07544d00a7a6036b2
+    - subnet-0ea4d885aad6b0b7e

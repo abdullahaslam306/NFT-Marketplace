@@ -1,0 +1,26 @@
+local:
+  STAGE: 'local'
+  LOG_LEVEL: 'trace'
+  REGION: 'us-east-1'
+  LOGGEDIN_USER_ID: ${env:LOGGEDIN_USER_ID}
+  LOGGEDIN_MERCHANT_ID: ${env:LOGGEDIN_USER_MERCHANT_ID}
+  LOGGEDIN_MERCHANT_COGNITO_SID: ${env:LOGGEDIN_MERCHANT_COGNITO_SID}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-development
+  
+Development:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'development'
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  
+Staging:
+  STAGE: 'staging'
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-staging
+  
+Production:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'production'
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-production

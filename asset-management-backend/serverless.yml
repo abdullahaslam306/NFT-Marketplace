@@ -1,0 +1,129 @@
+# Serverless 
+
+service: asset-management-backend
+
+package:
+  individually: false
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  - serverless-plugin-tracing
+  - serverless-plugin-lambda-insights
+
+custom:
+  serverless-offline:
+    httpPort: 3004 # port to access the APIs on local machine
+    lambdaPort: 3104 # port to access lambda functions locally
+    noPrependStageInUrl: true
+    useChildProcesses: true
+  defaultRegion: us-east-1
+  defaultStage: Development
+  lambdaInsights:
+    defaultLambdaInsights: true
+  lambdaMemorySize:
+    Development: 2084
+    Staging: 2084
+    Production: 4096
+  lambdaTimeout:
+    Development: 300
+    Staging: 300
+    Production: 300
+
+provider:
+  name: aws
+  tracing: true
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ${opt:region, self:custom.defaultRegion}
+  environment: ${file(serverless-env.yml):${self:provider.stage}}
+  deploymentBucket: ${file(serverless-env.yml):${self:provider.stage}.S3_DEPLOYMENT_BUCKET_NAME}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds:*
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeAsync
+        - lambda:InvokeFunction
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - s3:DeleteObject
+        - s3:ListBucket
+        - s3:PutObject
+        - s3:GetObject
+        - s3:HeadObject
+      Resource: "*"
+  versionFunctions: false
+  vpc: ${file(serverless-vpc.yml):${opt:stage, self:provider.stage}}
+
+functions:
+
+  AssetThumbnail:
+    handler: src/handlers/asset/thumbnail.handler
+    memorySize: ${self:custom.lambdaMemorySize.${opt:stage, self:provider.stage}}
+    timeout: ${self:custom.lambdaTimeout.${opt:stage, self:provider.stage}}
+
+  Assets:
+    handler: src/handlers/index.assetsHandle
+    memorySize: ${self:custom.lambdaMemorySize.${opt:stage, self:provider.stage}}
+    timeout: ${self:custom.lambdaTimeout.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/assets
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: api/v1/asset/create
+          method: POST
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  Asset:
+    handler: src/handlers/index.assetHandle
+    memorySize: ${self:custom.lambdaMemorySize.${opt:stage, self:provider.stage}}
+    timeout: ${self:custom.lambdaTimeout.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/asset/{uid}/update
+          method: PATCH
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: api/v1/asset/{uid}
+          method: DELETE
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+resources:
+  Resources:
+    GatewayResponse401:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: UNAUTHORIZED
+        RestApiId: 
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'          
+    
+    GatewayResponse403:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: ACCESS_DENIED
+        RestApiId: 
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '403' 

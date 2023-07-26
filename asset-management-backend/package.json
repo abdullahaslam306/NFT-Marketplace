@@ -1,0 +1,63 @@
+{
+  "name": "asset-management-backend",
+  "version": "0.1.0",
+  "description": "Backend APIs related to asset management",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blocommerce/asset-management-backend.git"
+  },
+  "scripts": {
+    "start": "sls offline start --stage local",
+    "lint": "npx eslint -c .eslintrc.json --ext .js src/",
+    "test": "jest --watchAll --verbose",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/jsonapi-serializer": "^3.6.5",
+    "@types/node": "^16.10.2",
+    "backend-utility": "git+https://github.com/blocommerce/backend-utility.git#develop",
+    "data-access-utility": "git+https://github.com/blocommerce/data-access-utility.git#develop",
+    "ethers": "^5.5.1",
+    "jsonapi-serializer": "^3.6.7",
+    "lodash": "^4.17.21",
+    "moment": "^2.23.0",
+    "pino": "^5.13.1",
+    "pino-pretty": "^7.0.1",
+    "sequelize": "^6.6.5",
+    "sequelize-mock": "^0.10.2",
+    "sequelize-typescript": "^2.1.0",
+    "serverless-offline": "^8.2.0",
+    "serverless-plugin-lambda-insights": "^1.4.0",
+    "serverless-plugin-tracing": "^2.0.0",
+    "serverless-plugin-typescript": "^2.1.0",
+    "sharp": "^0.29.3",
+    "source-map-support": "^0.5.13",
+    "tslib": "^2.3.1",
+    "uuidv4": "^6.2.12",
+    "vandium": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.83",
+    "@types/lodash": "^4.14.175",
+    "@types/pino": "^6.3.11",
+    "@types/sequelize": "^4.28.10",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.24.2",
+    "husky": "^7.0.2",
+    "nodemon": "^2.0.13",
+    "prettier": "^2.4.1",
+    "serverless": "^2.61.0",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.4.3",
+    "jest": "^27.2.4",
+    "jest-junit": "^13.0.0",
+    "ts-jest": "^27.0.7"
+  }
+}

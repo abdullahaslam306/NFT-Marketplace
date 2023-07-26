@@ -1,0 +1,121 @@
+# Serverless 
+
+service: meta-info-backend
+
+package:
+  individually: false
+  # patterns:
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  - serverless-plugin-tracing
+  - serverless-plugin-lambda-insights
+
+custom:
+  serverless-offline:
+    httpPort: 3002 # port to access the APIs on local machine
+    lambdaPort: 3102 # port to access lambda functions locally
+    noPrependStageInUrl: true
+    useChildProcesses: true
+  defaultRegion: us-east-1
+  defaultStage: Development
+  lambdaInsights:
+    defaultLambdaInsights: true
+  lambdaMemorySize:
+    Development: 2084
+    Staging: 2084
+    Production: 4096
+  lambdaTimeout:
+    Development: 300
+    Staging: 300
+    Production: 300
+
+provider:
+  name: aws
+  tracing: true
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ${opt:region, self:custom.defaultRegion}
+  deploymentBucket: ${file(serverless-env.yml):${self:provider.stage}.S3_DEPLOYMENT_BUCKET_NAME}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+  versionFunctions: false
+  vpc: ${file(serverless-vpc.yml):${opt:stage, self:provider.stage}}
+
+functions:
+  ListCountries:
+    handler: src/handlers/index.countriesHandle
+    memorySize: ${self:custom.lambdaMemorySize.${opt:stage, self:provider.stage}}
+    timeout: ${self:custom.lambdaTimeout.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/countries
+          method: GET
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+  
+  ListCountryStates:
+    handler: src/handlers/index.countryStatesHandle
+    memorySize: ${self:custom.lambdaMemorySize.${opt:stage, self:provider.stage}}
+    timeout: ${self:custom.lambdaTimeout.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/country/{code}/states
+          method: GET
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+  
+  ListCurrencies:
+    handler: src/handlers/index.currenciesHandle
+    memorySize: ${self:custom.lambdaMemorySize.${opt:stage, self:provider.stage}}
+    timeout: ${self:custom.lambdaTimeout.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/currencies
+          method: GET
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  ListLanguages:
+    handler: src/handlers/index.languagesHandle
+    memorySize: ${self:custom.lambdaMemorySize.${opt:stage, self:provider.stage}}
+    timeout: ${self:custom.lambdaTimeout.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/languages
+          method: GET
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+resources:
+  Resources:
+    GatewayResponse401:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: UNAUTHORIZED
+        RestApiId: 
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'          
+    
+    GatewayResponse403:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: ACCESS_DENIED
+        RestApiId: 
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '403' 

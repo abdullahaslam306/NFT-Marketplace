@@ -1,0 +1,39 @@
+{
+  "name": "dynamo-access-utility",
+  "version": "0.1.0",
+  "description": "Data access utility for accessing / storing private data in the Dynamo DB",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "author": "Blocommerce",
+  "scripts": {
+    "test": "",
+    "build": "tsc -p .",
+    "build:clean": "rimraf ./build",
+    "prebuild": "npm run build:clean",
+    "start": "ts-node ./lib/index.ts",
+    "lint": "npx eslint -c .eslintrc.json --ext .ts src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blocommerce/dynamo-access-utility.git"
+  },
+  "dependencies": {
+    "@shiftcoders/dynamo-easy": "^7.1.0",
+    "reflect-metadata": "^0.1.12",
+    "tslib": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^8.10.37",
+    "lint-staged": "^8.1.0",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.17.0",
+    "typescript": "^3.2.2",
+    "aws-sdk": "^2.1033.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.24.2"
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"user-wallet.d.ts","sourceRoot":"","sources":["../../lib/models/user-wallet.ts"],"names":[],"mappings":";AAEA,qBAEa,UAAU;IAErB,OAAO,EAAE,MAAM,CAAC;IAChB,QAAQ,EAAE,MAAM,CAAC;IACjB,QAAQ,EAAE,MAAM,CAAC;IACjB,YAAY,EAAE,MAAM,CAAC;gBAER,MAAM,EAAE,MAAM,EAAE,OAAO,EAAE,MAAM,EAAE,OAAO,EAAE,MAAM,EAAE,WAAW,EAAE,MAAM;CAMnF"}

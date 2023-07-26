@@ -1,0 +1,278 @@
+# Serverless
+
+service: nft-management-backend
+
+package:
+  individually: false
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  - serverless-plugin-tracing
+  - serverless-plugin-lambda-insights
+
+
+custom:
+  serverless-offline:
+    httpPort: 3005 # port to access the APIs on local machine
+    lambdaPort: 3105 # port to access lambda functions locally
+    noPrependStageInUrl: true
+    useChildProcesses: true
+  defaultRegion: us-east-1
+  defaultStage: Development
+  lambdaInsights:
+    defaultLambdaInsights: true
+
+provider:
+  name: aws
+  tracing: true
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ${opt:region, self:custom.defaultRegion}
+  environment: ${file(serverless-env.yml):${self:provider.stage}}
+  deploymentBucket: ${file(serverless-env.yml):${self:provider.stage}.S3_DEPLOYMENT_BUCKET_NAME}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds:*
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeAsync
+        - lambda:InvokeFunction
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:GetObjectTagging
+        - s3:PutObject
+        - s3:PutObjectTagging
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - kms:Get*
+        - kms:ListKeys
+        - kms:Decrypt*
+        - kms:Describe*
+        - kms:ListAliases
+        - kms:DescribeKey*
+      Resource: "*"
+  versionFunctions: false
+  vpc: ${file(serverless-vpc.yml):${opt:stage, self:provider.stage}}
+
+functions:
+  # Lazy mint nft
+  LazyMint:
+    handler: src/handlers/mint/lazy-mint.handler
+  # Nft minting step # 1
+  MoveNftAsset:
+    handler: src/handlers/mint/move-nft-asset.handler
+    timeout: 900
+  # Nft minting step # 2
+  UploadNftMetaData:
+    handler: src/handlers/mint/upload-nft-metadata.handler
+    timeout: 900
+  # Nft minting step # 3
+  Mint:
+    handler: src/handlers/mint/mint.handler
+    timeout: 900
+
+  UserNfts:
+    handler: src/handlers/index.nftsHandle
+    events:
+      - http:
+          path: api/v1/nft/list
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: api/v1/nft/create
+          method: POST
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  UserNft:
+    handler: src/handlers/index.nftHandle
+    events:
+      - http:
+          path: api/v1/nft/{uid}
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: api/v1/nft/{uid}/update
+          method: PATCH
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: api/v1/nft/{uid}/delete
+          method: DELETE
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+          
+  Nft:
+    handler: src/handlers/index.nftByContractAddressHandle
+    events:
+      - http:
+          path: api/v1/nft
+          method: GET
+          cors: true
+
+  TransferNft:
+    handler: src/handlers/index.nftTransferHandle
+    events:
+      - http:
+          path: api/v1/nft/{uid}/transfer
+          method: POST
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  UserNftSections:
+    handler: src/handlers/index.nftSectionsHandle
+    events:
+      - http:
+          path: api/v1/nft/{uid}/sections/create
+          method: POST
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: api/v1/nft/{uid}/sections/list
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  GetNftSectionsPublic:
+    handler: src/handlers/index.nftSectionsHandle
+    events:
+      - http:
+          path: api/v1/public/nft/{uid}/sections/list
+          method: GET
+          cors: true
+
+
+  UserNftSection:
+    handler: src/handlers/index.nftSectionHandle
+    events:
+      - http:
+          path: api/v1/nft/{uid}/section/{sectionUid}/update
+          method: PATCH
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: api/v1/nft/{uid}/section/{sectionUid}/delete
+          method: DELETE
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  NftTransactions:
+    handler: src/handlers/index.nftTransactionHistoryHandle
+    events:
+      - http:
+          path: api/v1/nft/{uid}/transaction-history
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  NftTransactionsPublic:
+    handler: src/handlers/index.nftTransactionHistoryHandle
+    events:
+      - http:
+          path: api/v1/public/nft/{uid}/transaction-history
+          method: GET
+          cors: true
+
+  NftBlockchainInfo:
+    handler: src/handlers/index.nftBlockchainInfoHandle
+    events:
+      - http:
+          path: api/v1/nft/{uid}/blockchain-info
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  NftBlockchainInfoPublic:
+    handler: src/handlers/index.nftBlockchainInfoHandle
+    events:
+      - http:
+          path: api/v1/public/nft/{uid}/blockchain-info
+          method: GET
+          cors: true
+
+  NftTransactionsAnalytics:
+    handler: src/handlers/index.transactionsDataHandle
+    events:
+      - http:
+          path: api/v1/nft/portfolio/transactions
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  NftFinancialAnalytics:
+    handler: src/handlers/index.financialDataHandle
+    events:
+      - http:
+          path: api/v1/nft/portfolio/{filter}
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  NftPortfolioStats:
+    handler: src/handlers/index.nftPortfolioStatsHandle
+    events:
+      - http:
+          path: api/v1/nft/portfolio/stats
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+  
+  NftTransaction:
+    handler: src/handlers/index.nftTransactionsHandle
+    events:
+      - http:
+          path: api/v1/nft/nft-transaction
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  AccountSummary:
+    handler: src/handlers/index.accountSummaryHandle
+    events:
+      - http:
+          path: api/v1/nft/account/summary
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+resources:
+  Resources:
+    GatewayResponse401:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "401"
+
+    GatewayResponse403:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: ACCESS_DENIED
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "403"

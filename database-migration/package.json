@@ -1,0 +1,35 @@
+{
+  "name": "blocommerce-database-migrations",
+  "version": "0.1.0",
+  "description": "Migration and seed data for Blocommerce Platform",
+  "scripts": {
+    "migrate": "npx sequelize db:migrate --env local",
+    "migrate:undo": "npx sequelize db:migrate:undo --env local",
+    "lint": "npx eslint -c .eslintrc.json --ext .js migrations/ --fix",
+    "prepare": "husky install",
+    "seed": "sequelize db:seed:all"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test-lint"
+    }
+  },
+  "author": "Blocommerce",
+  "dependencies": {
+    "backend-utility": "git+https://github.com/blocommerce/backend-utility.git#develop",
+    "moment": "^2.29.1",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "pino": "^7.6.2",
+    "sequelize": "^6.15.0",
+    "sequelize-cli": "^6.2.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1042.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
+    "husky": "^7.0.4"
+  }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="2" failures="0" errors="0" time="5.849">
+  <testsuite name="List API for listing assets by name" errors="0" failures="0" skipped="0" timestamp="2022-02-04T14:29:17" time="5.181" tests="2">
+    <testcase classname="List API for listing assets by name works OK if returns the matching assets" name="List API for listing assets by name works OK if returns the matching assets" time="0.01">
+    </testcase>
+    <testcase classname="List API for listing assets by name works OK if cant find matching asset" name="List API for listing assets by name works OK if cant find matching asset" time="0.007">
+    </testcase>
+  </testsuite>
+</testsuites>

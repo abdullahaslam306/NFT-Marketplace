@@ -1,0 +1,123 @@
+local:
+  Stage: "local"
+  LOG_LEVEL: "trace"
+  REGION: "us-east-1"
+  CUSTOM_AUTHORIZER_ARN: ''
+  CRYPTO_RATE_UPDATER: ''
+  BLOCOMMERCE_DB_DIALECT: "postgres"
+  MFA_EMAIL_SUBJECT: "Blocommerce Verification Code"
+  MERCHANT_APP_DOMAIN: "metaverse-dev.blocommerce.com"
+  NETWORK_URL: "https://rinkeby.etherscan.io/"
+  PROVIDER: "https://eth-rinkeby.alchemyapi.io/v2/DSPFJerVgxFM4USOn72vybRcxl-usm44"
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  WYRE_TEST_URL: "https://api.testwyre.com"
+  WYRE_RATE_URL: "https://api.sendwyre.com/v2/rates"
+  WYRE_REFFER_ACCOUNT_ID: "AC_ABWVVAW4AX3"
+  WYRE_API_KEY: "AK-E9LDX8FA-V2J4U2P2-QYAG8UW9-6N7L2WA6"
+  WYRE_SECRET_KEY: "SK-99R9ZCPJ-CLJVWNAN-TZCFFBUP-9N4JCABX"
+  ERC721_CONTRACT_ADDRESS: "0xCA893905CcFC6170d2d23d2f80f17d8035466551"
+  ERC1155_CONTRACT_ADDRESS: "0xDb340055C10E8f54F1df0f71A7f5a505CE548361"
+  BLOCOMMERCE_DB_PORT: ${env:BLOCOMMERCE_DB_PORT}
+  BLOCOMMERCE_DB_NAME: ${env:BLOCOMMERCE_DB_NAME}
+  BLOCOMMERCE_DB_HOSTNAME: ${env:BLOCOMMERCE_DB_HOSTNAME}
+  BLOCOMMERCE_DB_PASSWORD: ${env:BLOCOMMERCE_DB_PASSWORD}
+  BLOCOMMERCE_DB_USERNAME: ${env:BLOCOMMERCE_DB_USERNAME}
+  MORALIS_APP_ID: ${ssm:/BLOCOMMERCE/Development/moralis/app_id}
+  MORALIS_API_CHAIN: ${ssm:/BLOCOMMERCE/Development/moralis/api_chain}
+  MORALIS_SERVER_URL: ${ssm:/BLOCOMMERCE/Development/moralis/server_url}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Development/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Development/pubnub/subscribe_key}
+  
+Development:
+  LOG_LEVEL: "debug"
+  REGION: "us-east-1"
+  STAGE: "Development"
+  BLOCOMMERCE_DB_DIALECT: "postgres"
+  MFA_EMAIL_SUBJECT: "Blocommerce Verification Code"
+  MERCHANT_APP_DOMAIN: "metaverse-dev.blocommerce.com"
+  NETWORK_URL: ${ssm:/BLOCOMMERCE/Development/blockchain/network_url}
+  PROVIDER: ${ssm:/BLOCOMMERCE/Development/blockchain/provider}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  WYRE_TEST_URL: ${ssm:/BLOCOMMERCE/Development/wyre/test_url}
+  WYRE_RATE_URL: ${ssm:/BLOCOMMERCE/Development/wyre/rate_url}
+  WYRE_REFFER_ACCOUNT_ID: ${ssm:/BLOCOMMERCE/Development/wyre/reffer_account_id}
+  WYRE_API_KEY: ${ssm:/BLOCOMMERCE/Development/wyre/api_key}
+  WYRE_SECRET_KEY: ${ssm:/BLOCOMMERCE/Development/wyre/secret_key}
+  ERC721_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Development/blockchain/erc721_smart_contract_address}
+  ERC1155_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Development/blockchain/erc1155_smart_contract_address}
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/user_meta_data_bucket_name}
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Development/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Development/aurora/db_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Development/aurora/writer/endpoint}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Development/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Development/aurora/user_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Development/lambda/merchant_custom_authorizer_arn}
+  CRYPTO_RATE_UPDATER: ${ssm:/BLOCOMMERCE/Development/lambda/crypto_rate_update_frequency}
+  MORALIS_APP_ID: ${ssm:/BLOCOMMERCE/Development/moralis/app_id}
+  MORALIS_SERVER_URL: ${ssm:/BLOCOMMERCE/Development/moralis/server_url}
+  MORALIS_API_CHAIN: ${ssm:/BLOCOMMERCE/Development/moralis/api_chain}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Development/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Development/pubnub/subscribe_key}
+  
+Staging:
+  LOG_LEVEL: "debug"
+  REGION: "us-east-1"  
+  STAGE: "Staging"
+  BLOCOMMERCE_DB_DIALECT: "postgres"
+  MFA_EMAIL_SUBJECT: "Blocommerce Verification Code"
+  MERCHANT_APP_DOMAIN: "metaverse-stg.blocommerce.com"
+  NETWORK_URL: ${ssm:/BLOCOMMERCE/Staging/blockchain/network_url}
+  PROVIDER: ${ssm:/BLOCOMMERCE/Staging/blockchain/provider}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-staging
+  WYRE_TEST_URL: ${ssm:/BLOCOMMERCE/Staging/wyre/test_url}
+  WYRE_RATE_URL: ${ssm:/BLOCOMMERCE/Staging/wyre/rate_url}
+  WYRE_REFFER_ACCOUNT_ID: ${ssm:/BLOCOMMERCE/Staging/wyre/reffer_account_id}
+  WYRE_API_KEY: ${ssm:/BLOCOMMERCE/Staging/wyre/api_key}
+  WYRE_SECRET_KEY: ${ssm:/BLOCOMMERCE/Staging/wyre/secret_key}
+  ERC721_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Staging/blockchain/erc721_smart_contract_address}
+  ERC1155_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Staging/blockchain/erc1155_smart_contract_address}
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Staging/s3/user_meta_data_bucket_name}
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Staging/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Staging/aurora/db_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/writer/endpoint}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Staging/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/user_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Staging/lambda/merchant_custom_authorizer_arn}
+  CRYPTO_RATE_UPDATER: ${ssm:/BLOCOMMERCE/Staging/lambda/crypto_rate_update_frequency}
+  MORALIS_APP_ID: ${ssm:/BLOCOMMERCE/Staging/moralis/app_id}
+  MORALIS_SERVER_URL: ${ssm:/BLOCOMMERCE/Staging/moralis/server_url}
+  MORALIS_API_CHAIN: ${ssm:/BLOCOMMERCE/Staging/moralis/api_chain}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Staging/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Staging/pubnub/subscribe_key}
+  
+Production:
+  LOG_LEVEL: "debug"
+  REGION: "us-east-1"
+  STAGE: "Production"
+  BLOCOMMERCE_DB_DIALECT: "postgres"
+  MFA_EMAIL_SUBJECT: "Blocommerce Verification Code"
+  MERCHANT_APP_DOMAIN: "metaverse.blocommerce.com"
+  NETWORK_URL: ${ssm:/BLOCOMMERCE/Production/blockchain/network_url}
+  PROVIDER: ${ssm:/BLOCOMMERCE/Production/blockchain/provider}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-production
+  WYRE_TEST_URL: ${ssm:/BLOCOMMERCE/Production/wyre/test_url}
+  WYRE_RATE_URL: ${ssm:/BLOCOMMERCE/Production/wyre/rate_url}
+  WYRE_REFFER_ACCOUNT_ID: ${ssm:/BLOCOMMERCE/Production/wyre/reffer_account_id}
+  WYRE_API_KEY: ${ssm:/BLOCOMMERCE/Production/wyre/api_key}
+  WYRE_SECRET_KEY: ${ssm:/BLOCOMMERCE/Production/wyre/secret_key}
+  ERC721_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Production/blockchain/erc721_smart_contract_address}
+  ERC1155_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Production/blockchain/erc1155_smart_contract_address}
+  S3_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Production/s3/user_meta_data_bucket_name}
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Production/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Production/aurora/db_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Production/aurora/writer/endpoint}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Production/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Production/aurora/user_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Production/lambda/merchant_custom_authorizer_arn}
+  CRYPTO_RATE_UPDATER: ${ssm:/BLOCOMMERCE/Production/lambda/crypto_rate_update_frequency}
+  MORALIS_APP_ID: ${ssm:/BLOCOMMERCE/Production/moralis/app_id}
+  MORALIS_SERVER_URL: ${ssm:/BLOCOMMERCE/Production/moralis/server_url}
+  MORALIS_API_CHAIN: ${ssm:/BLOCOMMERCE/Production/moralis/api_chain}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Production/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Production/pubnub/subscribe_key}
+  

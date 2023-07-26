@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "./",
+    "paths": {
+      "*": ["types/*"],
+      "src/*": ["./src/*"],
+      "modules*": ["./src/handlers/*", "./src/common/*"],
+    },
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": ".build",
+    "sourceMap": true,
+    "lib": ["es2015"],
+    /* Both options are required by sequelize-typescript */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    
+    "preserveConstEnums": true,
+  },
+  "files": [
+    "./node_modules/@types/sequelize/index.d.ts",
+    // "./node_modules/dynamo-access-utility/build/index.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "src/__test__"
+  ]
+}

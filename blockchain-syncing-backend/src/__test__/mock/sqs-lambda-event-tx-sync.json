@@ -1,0 +1,15 @@
+{
+  "Records": [
+    {
+      "messageId": "790214a9-d296-49d3-9850-ef44dfec377a",
+      "receiptHandle": "AQEBxCW8HWTKnWQQkq087JqU86pJOzislAcrSIUjJqilhjW4uDrc3fgGWXm9hj0eE0zrQPMpLM9a9J1Plad1gElm26cphtzU35y43be52R9I3Lg5sBsoSdShULJTA7OYHB6rrKmdD+LDFJ0X2t4/l+1FFqaTpsKbAfGanaMGxwu43VbI7yxukDrLo0S6vw0R6i2sVdPCbayVpowtg5JpcbncV4W/JHx7kUhez3niYmEx2G5QAaO5lagwMTgcCvb3El7RCtj4w9/zwacUJUZrZQkaZQ==",
+      "body": "{\"bs\":4,\"i\":6,\"m\":{\"w\":[\"0x0e5Df4277388C9e156038Db9f09C390ED2730F2e\",\"0x4774deccF75ed6768a8EbB006ee0eC075C625F70\", \"0xe4935E887dED98e8Aeb7c1C58685e87785E66390\"],\"sc\":[{\"id\":1,\"address\":\"0x64b0854a255519d9bf82e40026d089d79e779d75\"},{\"id\":4,\"address\":\"0x60f80121c31a0d46b5279700f9df786054aa5ee5\"},{\"id\":9,\"address\":\"0x495f947276749ce646f68ac8c248420045cb7b5e\"},{\"id\":10,\"address\":\"0x3dd4d156860d0b84c377ee2aad0dac14b34c4add\"}]}}",
+      "attributes": [],
+      "messageAttributes": {},
+      "md5OfBody": "1e2006a0ccd9891e9f1fad9ccca80f30",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:217392961699:NFTQueue.fifo",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}

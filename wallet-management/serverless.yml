@@ -1,0 +1,221 @@
+service: blocommerce-Wallet
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-tracing
+  - serverless-plugin-lambda-insights
+package:
+  include:
+    - node_modules/**
+
+custom:
+  serverless-offline:
+    httpPort: 3003 # port to access the APIs on local machine
+    lambdaPort: 3103 # port to access lambda functions locally
+    noPrependStageInUrl: true
+    useChildProcesses: true
+  defaultRegion: us-east-1
+  defaultStage: Development
+  lambdaInsights:
+    defaultLambdaInsights: true
+  lamdaMemorySize:
+    Development: 2084
+    Staging: 2084
+    Production: 4096
+  lamdaTimeout:
+    Development: 300
+    Staging: 300
+    Production: 300
+
+provider:
+  name: aws
+  tracing: true
+  runtime: nodejs14.x
+  lambdaHashingVersion: "20201221"
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ${opt:region, self:custom.defaultRegion}
+  environment: ${file(serverless-env.yml):${self:provider.stage}}
+  deploymentBucket: ${file(serverless-env.yml):${self:provider.stage}.S3_DEPLOYMENT_BUCKET_NAME}
+  cryptoRateUpdater: ${file(serverless-env.yml):${self:provider.stage}.CRYPTO_RATE_UPDATER}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds:*
+        - dynamodb:*
+        - kms:*
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeAsync
+        - lambda:InvokeFunction
+      Resource: "*"
+  versionFunctions: false
+  vpc: ${file(serverless-vpc.yml):${opt:stage, self:provider.stage}}
+
+functions:
+  CreateWallet:
+    handler: src/handler/index.createWalletHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/create
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  GetWalletEthBalance:
+    handler: src/handler/index.getWalletEthBalanceHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/eth/balance
+          method: POST
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  GetWalletNFTBalance:
+    handler: src/handler/index.getWalletNFTBalanceHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/nft/balance
+          method: POST
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  RefillEth:
+    handler: src/handler/index.refillEthHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/eth/refill
+          method: POST
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  TransferEthers:
+    handler: src/handler/index.transferEthersHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/eth/transfer
+          method: POST
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  GetGasEstimate:
+    handler: src/handler/index.getGasEstimateHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/eth/gasestimate
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  CryptoRates:
+    handler: src/handler/index.getCryptoRateHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/exchange/rates
+          method: GET
+          cors: true
+          # authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  UpdateCryptoRates:
+    handler: src/handler/exchange/update-crypto-rate.handler
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - schedule: rate(${self:provider.cryptoRateUpdater})
+
+  Wallets:
+    handler: src/handler/index.walletsHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/list
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  Wallet:
+    handler: src/handler/index.walletHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/wallet/{uid}/update
+          method: PATCH
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: /api/v1/wallet/add
+          method: POST
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+  SmartContracts:
+    handler: src/handler/index.smartContractsHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/smart-contract/list
+          method: GET
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+      - http:
+          path: /api/v1/smart-contract/import
+          method: POST
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+  
+  SmartContract:
+    handler: src/handler/index.smartContractHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: /api/v1/smart-contract/{uid}/disconnect
+          method: DELETE
+          cors: true
+          authorizer: ${file(serverless-env.yml):${self:provider.stage}.CUSTOM_AUTHORIZER_ARN}
+
+resources:
+  Resources:
+    GatewayResponse401:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "401"
+
+    GatewayResponse403:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: ACCESS_DENIED
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "403"

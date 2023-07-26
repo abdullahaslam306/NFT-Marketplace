@@ -1,0 +1,151 @@
+# Serverless
+service: blockchain-syncing-backend
+
+package:
+  individually: false
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3006 # port to access the APIs on local machine
+    lambdaPort: 3106 # port to access lambda functions locally
+    noPrependStageInUrl: true
+    useChildProcesses: true
+  defaultRegion: us-east-1
+  defaultStage: Development
+  nftSyncQueueArn: ${file(serverless-env.yml):${self:provider.stage}.NFTS_QUEUE_ARN}
+  userNftSyncingRate: ${file(serverless-env.yml):${self:provider.stage}.USER_NFT_SYNCING_RATE, 60}
+  transactionSyncQueueArn: ${file(serverless-env.yml):${self:provider.stage}.TRANSACTIONS_QUEUE_ARN}
+  historicalNftSyncQueueArn: ${file(serverless-env.yml):${self:provider.stage}.HISTORICAL_NFTS_QUEUE_ARN}
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ${opt:region, self:custom.defaultRegion}
+  environment: ${file(serverless-env.yml):${self:provider.stage}}
+  deploymentBucket: ${file(serverless-env.yml):${self:provider.stage}.S3_DEPLOYMENT_BUCKET_NAME}
+  tracing:
+    lambda: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - rds:*
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DeleteNetworkInterface
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - lambda:InvokeAsync
+            - lambda:ListFunctions
+            - lambda:InvokeFunction
+            - lambda:ListEventSourceMappings
+            - lambda:CreateEventSourceMapping
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:DeleteMessage
+            - sqs:ReceiveMessage
+            - sqs:GetQueueAttributes
+          Resource: "*"
+  versionFunctions: false
+  vpc: ${file(serverless-vpc.yml):${opt:stage, self:provider.stage}}
+
+functions:
+##########################################################
+  # STEP - 1
+##########################################################
+
+  # Syncing lambda to initiate owned nft sync users
+  OwnedNftSyncInitiate:
+    handler: src/handlers/triggers/sync/nfts/initiate.handler
+    timeout: 900
+    memorySize: 10240
+    events:
+      - schedule: rate(${self:custom.userNftSyncingRate} minutes)
+
+  # Syncing lambda to process sqs message for user owned nfts
+  OwnedNftSyncWorker:
+    handler: src/handlers/triggers/sync/nfts/worker.handler
+    timeout: 900
+    memorySize: 10240
+    reservedConcurrency: 1
+    events:
+      - sqs:
+          arn: ${self:custom.nftSyncQueueArn}
+          batchSize: 1
+
+##########################################################
+  # STEP - 2
+##########################################################
+
+  # Syncing lambda to initiate transaction for user wallets including historical data
+  TransactionSyncInitiate:
+    handler: src/handlers/triggers/sync/transactions/initiate.handler
+    timeout: 900
+    memorySize: 10240
+   
+  # Syncing lambda to process sqs message for transaction for user wallets including historical data
+  TransactionSyncWorker:
+    handler: src/handlers/triggers/sync/transactions/worker.handler
+    timeout: 900
+    memorySize: 10240
+    reservedConcurrency: 1
+    events:
+      - sqs:
+          arn: ${self:custom.transactionSyncQueueArn}
+          batchSize: 1
+
+##########################################################
+  # STEP - 3
+##########################################################
+
+  # Lambda to initiate the process of syncing historical nfts
+  HistoricalNftSyncInitiate:
+    handler: src/handlers/triggers/sync/historical-nfts/initiate.handler
+    timeout: 900
+    memorySize: 10240
+
+  # Syncing lambda to process sqs message for historical nfts
+  HistoricalNftSyncWorker:
+    handler: src/handlers/triggers/sync/historical-nfts/worker.handler
+    timeout: 900
+    memorySize: 10240
+    reservedConcurrency: 1
+    events:
+      - sqs:
+          arn: ${self:custom.historicalNftSyncQueueArn}
+          batchSize: 1
+
+##########################################################
+  # STEP - 4
+##########################################################
+
+  # Lambda to initiate the process of syncing assets information for imported nfts
+  # NftAssetSyncInitiate:
+  #   handler: src/handlers/triggers/sync/assets/initiate.handler
+  #   timeout: 900
+  #   memorySize: 10240
+
+  # Lambda to process sqs messages for syncing assets information for imported nfts
+  # NftAssetSyncWorker:
+  #   handler: src/handlers/triggers/sync/assets/worker.handler
+  #   timeout: 900
+  #   memorySize: 10240
+  #   reservedConcurrency: 1
+  #   events:
+  #     - sqs:
+  #         arn: ${self:custom.nftAssetSyncQueueArn}
+  #         batchSize: 1
+
+  # Lambda to update moralis watch address configurations
+  UpdateMoralisWatch:
+    handler: src/handlers/triggers/moralis-watch/update.handler
+    timeout: 300

@@ -1,0 +1,282 @@
+service: merchant-auth-backend
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-tracing
+  - serverless-plugin-lambda-insights
+package:
+  include:
+    - ../node_modules/**
+
+custom:
+  serverless-offline:
+    httpPort: 3001 # port to access the APIs on local machine
+    lambdaPort: 3101 # port to access lambda functions locally
+    noPrependStageInUrl: true
+    useChildProcesses: true
+  defaultRegion: us-east-1
+  defaultStage: Development
+  encryptionRotationRate: ${file(serverless-env.yml):${self:provider.stage}.ENCRYPTION_ROTATION_RATE, 180}
+  lambdaInsights:
+    defaultLambdaInsights: true
+  lamdaMemorySize:
+    Development: 2084
+    Staging: 2084
+    Production: 4096
+  lamdaTimeout:
+    Development: 300
+    Staging: 300
+    Production: 300
+         
+provider:
+  name: aws
+  runtime: nodejs14.x
+  tracing: true
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ${opt:region, self:custom.defaultRegion}
+  environment: ${file(serverless-env.yml):${self:provider.stage}}
+  deploymentBucket: ${file(serverless-env.yml):${self:provider.stage}.S3_DEPLOYMENT_BUCKET_NAME}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds:*
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+    - Effect: Allow
+      Action: 
+        - sts:*
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - ses:SendEmail
+        - ses:SendRawEmail
+        - sns:SetSMSAttributes
+        - sns:Publish
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminSetUserPassword 
+        - cognito-idp:AdminUpdateUserAttributes
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+        - secretsmanager:PutSecretValue
+        - secretsmanager:DescribeSecret
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - codepipeline:StartPipelineExecution
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeAsync
+        - lambda:InvokeFunction
+      Resource: "*"
+  versionFunctions: false
+  vpc: ${file(serverless-vpc.yml):${opt:stage, self:provider.stage}}
+
+    
+functions:
+
+  Authorizer:
+    handler: handlers/triggers/authorizer.handler
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+
+  CustomMessageTrigger:
+    handler: handlers/triggers/custom-message.handler
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - cognitoUserPool:
+          pool: ${file(serverless-env.yml):${self:provider.stage}.MERCHANT_COGNITO_USERPOOL_NAME}
+          trigger: CustomMessage
+          existing: true
+
+  PostConfirmationTrigger:
+    handler: handlers/triggers/post-confirmation.handler
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - cognitoUserPool:
+          pool: ${file(serverless-env.yml):${self:provider.stage}.MERCHANT_COGNITO_USERPOOL_NAME}
+          trigger: PostConfirmation
+          existing: true
+  
+  RotateEncryptionKeys: 
+    handler: handlers/triggers/rotate-encryption-keys.handler
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - schedule: rate(${self:custom.encryptionRotationRate} days)
+  
+  SignUp:
+    handler: handlers/index.merchantHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/register
+          method: POST
+          cors: true
+  
+  EmailAvailability:
+    handler: handlers/index.merchantHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/availability
+          method: GET
+          cors: true
+
+  AddPhoneNumber:
+    handler: handlers/index.phoneHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/add-phone
+          method: PATCH
+          cors: true
+          authorizer: Authorizer
+
+  MerchantInfo:
+    handler: handlers/index.merchantInfoHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/info
+          method: GET
+          cors: true
+          authorizer: Authorizer
+
+  VerifyPhoneNumber:
+    handler: handlers/index.phoneHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/verify-phone
+          method: POST
+          cors: true
+          authorizer: Authorizer
+  
+  TemporaryAuthCredentials:
+    handler: handlers/index.tempCredentialsHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/auth/temp-credentials
+          method: GET
+          cors: true
+          authorizer: Authorizer
+
+  TemporaryAuthPublicCredentials:
+    handler: handlers/index.tempCredentialsPublicHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/public/merchant/auth/temp-credentials-public
+          method: GET
+          cors: true
+
+  UserUpdate:
+    handler: handlers/index.profileHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/profile/update
+          method: PATCH
+          cors: true
+          authorizer: Authorizer
+
+  UniqueUsername:
+    handler: handlers/index.profileHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/profile/unique-username
+          method: GET
+          cors: true
+          authorizer: Authorizer
+
+  Auth:
+    handler: handlers/index.authHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/auth/mfa/send
+          method: POST
+          cors: true
+          authorizer: Authorizer
+      - http:
+          path: api/v1/merchant/auth/mfa/resend
+          method: PATCH
+          cors: true
+          authorizer: Authorizer
+      - http:
+          path: api/v1/merchant/auth/forgot-password/initiate
+          method: PUT
+          cors: true
+
+  VerifyUpdatePassword:
+    handler: handlers/index.verifyUpdatePasswordHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/profile/password/update
+          method: PUT
+          cors: true
+          authorizer: Authorizer
+      - http:
+          path: api/v1/merchant/profile/forgot-password/update
+          method: PATCH
+          cors: true
+
+  VerifyUpdatePhone:
+    handler: handlers/index.verifyUpdatePhoneHandle
+    timeout: ${self:custom.lamdaTimeout.${opt:stage, self:provider.stage}}
+    memorySize: ${self:custom.lamdaMemorySize.${opt:stage, self:provider.stage}}
+    events:
+      - http:
+          path: api/v1/merchant/profile/phone/update
+          method: PUT
+          cors: true
+          authorizer: Authorizer
+
+resources:
+  Resources:
+    GatewayResponse401:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: UNAUTHORIZED
+        RestApiId: 
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'          
+    
+    GatewayResponse403:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: ACCESS_DENIED
+        RestApiId: 
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '403'     

@@ -1,0 +1,93 @@
+local:
+  STAGE: 'local'
+  LOG_LEVEL: 'trace'
+  REGION: 'us-east-1'
+  CUSTOM_AUTHORIZER_ARN: ''
+  OFFLINE_LAMBDA_PORT : 3105
+  LOGGEDIN_USER_ID: ${env:BLOCOMMERCE_LOGGEDIN_USER_ID}
+  LOGGEDIN_MERCHANT_ID: ${env:BLOCOMMERCE_LOGGEDIN_USER_MERCHANT_ID}
+  LOGGEDIN_MERCHANT_COGNITO_SID: ${env:BLOCOMMERCE_LOGGEDIN_MERCHANT_COGNITO_SID}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  S3_USER_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/user_meta_data_bucket_name}
+  S3_NFT_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/nft_meta_data_bucket_name}
+  PROVIDER: ${ssm:/BLOCOMMERCE/Development/blockchain/provider}
+  BLOCOMMERCE_ERC721_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Development/blockchain/erc721_smart_contract_address}
+  BLOCOMMERCE_ERC1155_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Development/blockchain/erc1155_smart_contract_address}
+  NFT_STORAGE_ENDPOINT: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_storage_endpoint}
+  NFT_STORAGE_SECRET: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_storage_secret}
+  NFT_EXTERNAL_URL: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_external_url}
+  NFT_STORAGE_GATEWAY: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_storage_base_url}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Development/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Development/pubnub/subscribe_key}
+  
+Development:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'Development'
+  MERCHANT_APP_DOMAIN: 'metaverse-dev.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Development/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Development/aurora/db_name}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Development/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Development/aurora/user_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Development/aurora/writer/endpoint}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-dev
+  S3_USER_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/user_meta_data_bucket_name}
+  S3_NFT_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Development/s3/nft_meta_data_bucket_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Development/lambda/merchant_custom_authorizer_arn}
+  PROVIDER: ${ssm:/BLOCOMMERCE/Development/blockchain/provider}
+  BLOCOMMERCE_ERC721_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Development/blockchain/erc721_smart_contract_address}
+  BLOCOMMERCE_ERC1155_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Development/blockchain/erc1155_smart_contract_address}
+  NFT_STORAGE_ENDPOINT: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_storage_endpoint}
+  NFT_STORAGE_SECRET: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_storage_secret}
+  NFT_EXTERNAL_URL: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_external_url}
+  NFT_STORAGE_GATEWAY: ${ssm:/BLOCOMMERCE/Development/blockchain/nft_storage_base_url}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Development/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Development/pubnub/subscribe_key}
+  
+Staging:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'Staging'
+  MERCHANT_APP_DOMAIN: 'metaverse-stg.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Staging/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Staging/aurora/db_name}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Staging/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/user_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Staging/aurora/writer/endpoint}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-staging
+  S3_USER_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Staging/s3/user_meta_data_bucket_name}
+  S3_NFT_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Staging/s3/nft_meta_data_bucket_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Staging/lambda/merchant_custom_authorizer_arn}
+  PROVIDER: ${ssm:/BLOCOMMERCE/Staging/blockchain/provider}
+  BLOCOMMERCE_ERC721_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Staging/blockchain/erc721_smart_contract_address}
+  BLOCOMMERCE_ERC1155_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Staging/blockchain/erc1155_smart_contract_address}
+  NFT_STORAGE_ENDPOINT: ${ssm:/BLOCOMMERCE/Staging/blockchain/nft_storage_endpoint}
+  NFT_STORAGE_SECRET: ${ssm:/BLOCOMMERCE/Staging/blockchain/nft_storage_secret}
+  NFT_EXTERNAL_URL: ${ssm:/BLOCOMMERCE/Staging/blockchain/nft_external_url}
+  NFT_STORAGE_GATEWAY: ${ssm:/BLOCOMMERCE/Staging/blockchain/nft_storage_base_url}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Staging/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Staging/pubnub/subscribe_key}
+  
+Production:
+  LOG_LEVEL: 'debug'
+  REGION: 'us-east-1'
+  STAGE: 'Production'
+  MERCHANT_APP_DOMAIN: 'metaverse.blocommerce.com'
+  BLOCOMMERCE_DB_PORT: ${ssm:/BLOCOMMERCE/Production/aurora/port}
+  BLOCOMMERCE_DB_NAME: ${ssm:/BLOCOMMERCE/Production/aurora/db_name}
+  BLOCOMMERCE_DB_PASSWORD: ${ssm:/BLOCOMMERCE/Production/aurora/password}
+  BLOCOMMERCE_DB_USERNAME: ${ssm:/BLOCOMMERCE/Production/aurora/user_name}
+  BLOCOMMERCE_DB_HOSTNAME: ${ssm:/BLOCOMMERCE/Production/aurora/writer/endpoint}
+  S3_DEPLOYMENT_BUCKET_NAME: blocommerce-serverless-deployment-production
+  S3_USER_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Production/s3/user_meta_data_bucket_name}
+  S3_NFT_META_DATA_BUCKET_NAME: ${ssm:/BLOCOMMERCE/Production/s3/nft_meta_data_bucket_name}
+  CUSTOM_AUTHORIZER_ARN: ${ssm:/BLOCOMMERCE/Production/lambda/merchant_custom_authorizer_arn}
+  PROVIDER: ${ssm:/BLOCOMMERCE/Production/blockchain/provider}
+  BLOCOMMERCE_ERC721_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Production/blockchain/erc721_smart_contract_address}
+  BLOCOMMERCE_ERC1155_SMART_CONTRACT_ADDRESS: ${ssm:/BLOCOMMERCE/Production/blockchain/erc1155_smart_contract_address}
+  NFT_STORAGE_ENDPOINT: ${ssm:/BLOCOMMERCE/Production/blockchain/nft_storage_endpoint}
+  NFT_STORAGE_SECRET: ${ssm:/BLOCOMMERCE/Production/blockchain/nft_storage_secret}
+  NFT_EXTERNAL_URL: ${ssm:/BLOCOMMERCE/Production/blockchain/nft_external_url}
+  NFT_STORAGE_GATEWAY: ${ssm:/BLOCOMMERCE/Production/blockchain/nft_storage_base_url}
+  PUBNUB_PUBLISH_KEY:  ${ssm:/BLOCOMMERCE/Production/pubnub/publish_key}
+  PUBNUB_SUBSCRIBE_KEY: ${ssm:/BLOCOMMERCE/Production/pubnub/subscribe_key}
